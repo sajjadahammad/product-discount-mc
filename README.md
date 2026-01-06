@@ -1,4 +1,70 @@
-# React + TypeScript + Vite
+# Product Discount MC
+
+A React + TypeScript application for managing product discounts with a modern UI built on Vite.
+
+## Installation
+
+Install dependencies using:
+
+```bash
+npm install --legacy-peer-deps
+```
+
+**Why `--legacy-peer-deps` instead of `npm i`?**
+
+This project uses React 19, but `@testing-library/react@14.3.1` only supports React 18. The `--legacy-peer-deps` flag tells npm to ignore peer dependency conflicts and install anyway. This is safe because React Testing Library is generally compatible with React 19 despite the peer dependency warning.
+
+**Note:** Once `@testing-library/react` releases a version that officially supports React 19, you can switch back to `npm install`.
+
+## Project Structure
+
+```
+product-discount-mc/
+├── src/                          # Source code
+│   ├── components/               # React components
+│   │   ├── ui/                   # Reusable UI components (button, input, dialog, checkbox)
+│   │   ├── DiscountInput.tsx     # Discount input component
+│   │   ├── ProductItem.tsx       # Individual product display
+│   │   ├── ProductList.tsx       # Product list container
+│   │   ├── ProductPicker.tsx     # Product selection component
+│   │   └── VariantItem.tsx       # Product variant display
+│   ├── hooks/                    # Custom React hooks
+│   │   ├── useDebounce.ts        # Debounce utility hook
+│   │   └── useProducts.ts        # Products data fetching hook
+│   ├── store/                    # Zustand state management
+│   │   ├── pickerStore.ts        # Product picker state
+│   │   └── productStore.ts       # Selected products state
+│   ├── services/                 # API services
+│   │   └── api.ts                # API client and endpoints
+│   ├── lib/                      # Utility libraries
+│   │   ├── axios.ts              # Axios configuration
+│   │   └── utils.ts              # Helper functions
+│   ├── types/                    # TypeScript type definitions
+│   │   └── product.ts            # Product-related types
+│   ├── assets/                   # Static assets
+│   ├── App.tsx                   # Main application component
+│   ├── main.tsx                  # Application entry point
+│   └── index.css                 # Global styles
+├── tests/                        # Test files
+│   ├── components/               # Component tests
+│   ├── hooks/                    # Hook tests
+│   ├── stores/                   # Store tests
+│   ├── utils/                    # Test utilities
+│   ├── setup.ts                  # Test setup configuration
+│   └── README.md                 # Testing documentation
+├── public/                       # Public static assets
+├── dist/                         # Build output directory
+├── jest.config.cjs               # Jest test configuration
+├── vite.config.ts                # Vite build configuration
+├── tsconfig.json                 # TypeScript root configuration
+├── tsconfig.app.json             # TypeScript app configuration
+├── tsconfig.test.json            # TypeScript test configuration
+├── tsconfig.node.json            # TypeScript Node configuration
+├── eslint.config.js              # ESLint configuration
+└── package.json                  # Project dependencies and scripts
+```
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
