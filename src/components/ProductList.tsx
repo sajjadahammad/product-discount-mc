@@ -31,8 +31,7 @@ export function ProductList() {
     toggleVariantVisibility,
   } = useProductStore();
 
-  const { openPicker, setSelectionForProduct, setSelectionFromProducts } =
-    usePickerStore();
+  const { openPicker, setSelectionForProduct } = usePickerStore();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -99,9 +98,7 @@ export function ProductList() {
 
   const handleAddProduct = () => {
     openPicker(products.length);
-    if (products.length > 0) {
-      setSelectionFromProducts(products);
-    }
+    // Don't pre-select existing products when adding - only select when editing
   };
 
   const handleEditProduct = (index: number) => {
