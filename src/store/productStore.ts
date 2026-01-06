@@ -56,13 +56,28 @@ export const useProductStore = create<ProductStore>((set) => ({
     }),
 
   updateProductDiscount: (productIndex, discount, type) =>
-    set((state) => ({
-      products: state.products.map((p, i) =>
-        i === productIndex
-          ? { ...p, discount: { value: discount, type } }
-          : p
-      ),
-    })),
+    set((state) => {
+      const product = state.products[productIndex];
+      if (!product) return state;
+
+      // Create variant discounts object with discount applied to all variants
+      const variantDiscounts: Record<number, { value: number; type: DiscountType }> = {};
+      product.variants.forEach((variant) => {
+        variantDiscounts[variant.id] = { value: discount, type };
+      });
+
+      return {
+        products: state.products.map((p, i) =>
+          i === productIndex
+            ? {
+                ...p,
+                discount: { value: discount, type },
+                variantDiscounts,
+              }
+            : p
+        ),
+      };
+    }),
 
   updateVariantDiscount: (productIndex, variantIndex, discount, type) =>
     set((state) => ({

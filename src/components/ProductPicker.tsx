@@ -19,6 +19,32 @@ import { Checkbox } from './ui/checkbox';
 
 const DEFAULT_IMAGE = '/monk.png';
 
+function ProductImage({ src, alt }: { src: string; alt: string }) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <div className="relative w-16 h-16 shrink-0">
+      {!imageLoaded && !imageError && (
+        <div className="absolute inset-0 bg-gray-200 rounded border border-gray-200 animate-pulse" />
+      )}
+      <img
+        src={imageError ? DEFAULT_IMAGE : src}
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setImageLoaded(true)}
+        onError={() => {
+          setImageError(true);
+          setImageLoaded(true);
+        }}
+        className={`w-16 h-16 object-cover rounded border border-gray-200 transition-opacity duration-200 ${
+          imageLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+    </div>
+  );
+}
+
 export function ProductPicker() {
   const {
     isOpen,
@@ -176,11 +202,17 @@ export function ProductPicker() {
         <div
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto px-6 py-4"
+          className="flex-1 overflow-y-auto px-6 py-4 min-h-[400px]"
         >
           {allProducts.length === 0 && !isFetching && (
-            <div className="text-center text-gray-500 py-8">
+            <div className="text-center text-gray-500 py-8 min-h-[200px] flex items-center justify-center">
               No products found
+            </div>
+          )}
+
+          {isFetching && !isFetchingNextPage && allProducts.length === 0 && (
+            <div className="text-center text-gray-500 py-8 min-h-[200px] flex items-center justify-center">
+              Loading...
             </div>
           )}
 
@@ -192,11 +224,9 @@ export function ProductPicker() {
             return (
               <div key={product.id} className="mb-4 border-b border-gray-200 pb-4 last:border-b-0">
                 <div className="flex items-start gap-3 mb-2">
-                  <img
+                  <ProductImage
                     src={product.image?.src || DEFAULT_IMAGE}
                     alt={product.title}
-                    loading="lazy"
-                    className="w-16 h-16 object-cover rounded border border-gray-200"
                   />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
@@ -245,9 +275,6 @@ export function ProductPicker() {
             );
           })}
 
-          {isFetching && !isFetchingNextPage && (
-            <div className="text-center text-gray-500 py-4">Loading...</div>
-          )}
           {isFetchingNextPage && (
             <div className="text-center text-gray-500 py-4">Loading more...</div>
           )}
