@@ -134,33 +134,6 @@ export function ProductItem({
           </SortableContext>
         </div>
       )}
-
-      {!hasMultipleVariants && product.variants.length === 1 && (
-        <div className="py-2">
-          <div className="flex items-center gap-4 pl-12">
-            <div className="flex-1">
-              <Input
-                type="text"
-                value={product.title}
-                readOnly
-                className="bg-white"
-              />
-            </div>
-            <DiscountInput
-              value={
-                product.variantDiscounts?.[product.variants[0].id]?.value || 0
-              }
-              type={
-                product.variantDiscounts?.[product.variants[0].id]?.type ||
-                'percentage'
-              }
-              onChange={(value, type) =>
-                onVariantDiscountChange(0, value, type)
-              }
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
