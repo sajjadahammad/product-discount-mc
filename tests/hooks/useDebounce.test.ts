@@ -1,5 +1,5 @@
 // Jest globals are available without import
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useDebounce } from '@/hooks/useDebounce';
 
 describe('useDebounce', () => {
@@ -34,7 +34,9 @@ describe('useDebounce', () => {
     expect(result.current).toBe('initial');
 
     // Fast-forward time
-    jest.advanceTimersByTime(500);
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
 
     // Wait for the debounced value to update
     await waitFor(() => {
@@ -52,13 +54,19 @@ describe('useDebounce', () => {
 
     // Rapid changes
     rerender({ value: 'change1', delay: 500 });
-    jest.advanceTimersByTime(200);
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
 
     rerender({ value: 'change2', delay: 500 });
-    jest.advanceTimersByTime(200);
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
 
     rerender({ value: 'change3', delay: 500 });
-    jest.advanceTimersByTime(500);
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
 
     await waitFor(() => {
       expect(result.current).toBe('change3');
@@ -80,7 +88,9 @@ describe('useDebounce', () => {
     expect(result.current).toBe(0);
 
     rerender({ value: 100, delay: 300 });
-    jest.advanceTimersByTime(300);
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(result.current).toBe(100);

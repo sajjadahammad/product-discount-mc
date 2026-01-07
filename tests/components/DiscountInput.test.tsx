@@ -1,5 +1,5 @@
 // Jest globals are available without import
-import { render, screen } from '../utils/test-utils';
+import { render, screen, fireEvent } from '../utils/test-utils';
 import userEvent from '@testing-library/user-event';
 import { DiscountInput } from '@/components/DiscountInput';
 
@@ -13,15 +13,20 @@ describe('DiscountInput', () => {
   });
 
   it('should call onChange when input value changes', async () => {
-    const user = userEvent.setup();
     const mockOnChange = jest.fn();
-    render(<DiscountInput value={0} type="percentage" onChange={mockOnChange} />);
+    const { rerender } = render(<DiscountInput value={0} type="percentage" onChange={mockOnChange} />);
 
-    const input = screen.getByPlaceholderText('0');
-    await user.clear(input);
-    await user.type(input, '25');
-
-    expect(mockOnChange).toHaveBeenCalled();
+    const input = screen.getByPlaceholderText('0') as HTMLInputElement;
+    
+    // Simulate typing '25' by firing change events
+    fireEvent.change(input, { target: { value: '2' } });
+    expect(mockOnChange).toHaveBeenCalledWith(2, 'percentage');
+    
+    // Update the component with the new value (simulating controlled component behavior)
+    rerender(<DiscountInput value={2} type="percentage" onChange={mockOnChange} />);
+    
+    fireEvent.change(input, { target: { value: '25' } });
+    expect(mockOnChange).toHaveBeenCalledWith(25, 'percentage');
   });
 
   it('should display percentage type in select', () => {
