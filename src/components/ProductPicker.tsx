@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { usePickerStore } from '@/store/pickerStore';
 import { useProductStore } from '@/store/productStore';
 import type { SelectedProduct } from '@/types/product';
@@ -156,9 +157,57 @@ export function ProductPicker() {
     const isEditing = editingProductIndex !== null && editingProductIndex < products.length;
 
     if (isEditing) {
-      replaceProduct(editingProductIndex!, selectedProductsWithDefaults);
+      // Create set of existing product IDs, excluding the product being edited
+      const existingProductIds = new Set(
+        products
+          .filter((_, idx) => idx !== editingProductIndex)
+          .map((p) => p.id)
+      );
+
+      // Filter out duplicates (products that already exist in the list, excluding the one being edited)
+      const uniqueProducts = selectedProductsWithDefaults.filter(
+        (product) => !existingProductIds.has(product.id)
+      );
+      const duplicateCount = selectedProductsWithDefaults.length - uniqueProducts.length;
+
+      // If all selected products are duplicates, prevent action
+      if (uniqueProducts.length === 0) {
+        toast.error('All selected products are already in the list. Please select different products.');
+        return;
+      }
+
+      // If some products are duplicates, show a warning but still replace with the unique ones
+      if (duplicateCount > 0) {
+        toast.error(
+          `${duplicateCount} product${duplicateCount > 1 ? 's' : ''} ${duplicateCount > 1 ? 'are' : 'is'} already in the list and ${duplicateCount > 1 ? 'were' : 'was'} not added.`
+        );
+      }
+
+      // Always replace the product at editingProductIndex with the newly selected products
+      // This replaces the existing product with the selected ones (even if it's the same product)
+      replaceProduct(editingProductIndex!, uniqueProducts);
     } else {
-      selectedProductsWithDefaults.forEach((product) => addProduct(product));
+      // For adding new products, check for duplicates
+      const existingProductIds = new Set(products.map((p) => p.id));
+      const uniqueProducts = selectedProductsWithDefaults.filter(
+        (product) => !existingProductIds.has(product.id)
+      );
+      const duplicateCount = selectedProductsWithDefaults.length - uniqueProducts.length;
+
+      // If all selected products are duplicates, prevent action
+      if (uniqueProducts.length === 0) {
+        toast.error('All selected products are already in the list. Please select different products.');
+        return;
+      }
+
+      // If some products are duplicates, show a warning but still add the unique ones
+      if (duplicateCount > 0) {
+        toast.error(
+          `${duplicateCount} product${duplicateCount > 1 ? 's' : ''} ${duplicateCount > 1 ? 'are' : 'is'} already in the list and ${duplicateCount > 1 ? 'were' : 'was'} not added.`
+        );
+      }
+
+      uniqueProducts.forEach((product) => addProduct(product));
     }
 
     resetSelection();
